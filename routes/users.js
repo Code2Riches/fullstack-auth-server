@@ -91,4 +91,41 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
+/* GET Message */
+router.get("/message", (req, res) => {
+  const tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
+  const token = req.header(tokenHeaderKey);
+  const jwtSecretKey = process.env.JWT_SECRET_KEY;
+  const verified = jwt.verify(token, jwtSecretKey);
+
+  try {
+    if (!verifiedToken) {
+      return res.json({
+        success: false,
+        message: "ID Token could not be verified",
+      });
+    }
+    
+    if (userData && userData.scope === "user") {
+      return res.json({
+        success: true,
+        message: "I am a normal user",
+      });
+    }
+    
+    if (userData && userData.scope === "admin") {
+      return res.json({
+        success: true,
+        message: "I am an admin user",
+      });
+    }
+
+  } catch (error) {
+    res.json({
+      success: false,
+      error: error.toString(),
+    })
+  }
+})
+
 module.exports = router;
