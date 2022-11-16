@@ -96,10 +96,14 @@ router.get("/message", (req, res) => {
   const tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
   const token = req.header(tokenHeaderKey);
   const jwtSecretKey = process.env.JWT_SECRET_KEY;
-  const verified = jwt.verify(token, jwtSecretKey);
+  const verifiedToken = jwt.verify(token, jwtSecretKey);
+  console.log(verifiedToken)
+
+  const userData = verifiedToken.userData
 
   try {
     if (!verifiedToken) {
+
       return res.json({
         success: false,
         message: "ID Token could not be verified",
@@ -119,7 +123,7 @@ router.get("/message", (req, res) => {
         message: "I am an admin user",
       });
     }
-
+    throw Error("Access Denied");
   } catch (error) {
     res.json({
       success: false,
